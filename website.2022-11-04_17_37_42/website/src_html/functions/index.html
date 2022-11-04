@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <!-- Тут писать код -->
+    <p></p>
+    <p></p>
+    Some functions of the project
+    <p></p>
+    <p></p>
+        <div id="parent" name="parent">
+            <p>Поле для ввода значения:</p>
+            <p><input id="parent_value" name="parent_value" type="text"></p>
+            <button onClick="show_user_by_id(this);" type="button" id="parent_button" name="parent_button">Показать подробно</button>
+            <div id="parent_cargo" name="parent_cargo"></div>
+        </div>
+	<div>
+	    <p>Setup value</p>
+	    <form action="/function/servo" method="post">
+		<input type="text" required name="value" placeholder="value">
+                <input type="submit" name value="enter value">
+		<input type="text" hidden name="post_type" value="set_servo">
+            </form>
+	</div>
+    <p></p>
+    <p></p>
+    <!-- Тут писать код  -->
+
+{% endblock %}

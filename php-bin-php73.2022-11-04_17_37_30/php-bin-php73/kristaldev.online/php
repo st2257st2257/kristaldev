@@ -1,0 +1,6 @@
+#!/bin/sh
+PHP_INI_SCAN_DIR='/var/www/u1825824/data/php-bin-php73/kristaldev.online:'
+PHPRC='/var/www/u1825824/data/php-bin-php73'
+export PHP_INI_SCAN_DIR
+export PHPRC
+exec /opt/php/7.3/bin/php-cgi

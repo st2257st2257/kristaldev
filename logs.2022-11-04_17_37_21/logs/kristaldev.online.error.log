@@ -1,0 +1,1 @@
+2022/11/04 14:41:06 [warn] 2661#2661: *81354995 an upstream response is buffered to a temporary file /tmp/nginx_proxy_temp/0001235577 while reading upstream, client: 5.255.253.141, server: kristaldev.online, request: "GET /robots.txt HTTP/1.1", upstream: "http://127.0.0.1:8080/robots.txt", host: "kristaldev.online"
