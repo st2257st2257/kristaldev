@@ -7,7 +7,6 @@ class Cache:
         app.config['SQLALCHEMY_DATABASE_URI'] = cache_url
         self.db = SQLAlchemy(app)
         self.record_class = self._create_record_class()
-        self.db.create_all()  # why create if already wxists
 
     def _create_record_class(self):
         class Record(self.db.Model):
