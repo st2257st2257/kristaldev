@@ -11,3 +11,8 @@ code for my site kristaldev
 9) pip install wtforms
 10) pip install flask_wtf
 11) waitress-serve —port=8090 —call hello:create_app
+
+after first setting:
+1) source my_env/bin/activate
+2) cd kristaldev
+3) waitress-serve —port=8090 —call hello:create_app
