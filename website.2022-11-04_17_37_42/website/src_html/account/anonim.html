@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <table align = 'center' style="height:100%"><tr><td>
+        <h2>Личный кабинет</h2>
+        <form action="/authorization" method="get">
+            <input type="submit" name value="Авторизоваться" style="width: 300px;">
+        </form>
+        <form action="/registration" method="get">
+            <input type="submit" value="Зарегистрироваться" style="width: 300px;">
+        </form>
+        <form action="/forgot_password" method="get">
+            <input type="submit" value="Восстановить пароль" style="width: 300px;">
+        </form>
+    </tr></td></table>
+
+{% endblock %}

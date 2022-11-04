@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--  MAIN SETTINGS  -->
+        <title>Rocket</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/js.js') }}?ver={{ css_version }}"></script>
+    </head>
+    <body>
+        <!-- MENU BLOCK -->
+        <header class="header">
+            <div class="menu">
+                <nav class="nav">
+                    <a href="/">Главная</a>
+                    <a href="/about">О проекте</a>
+                    <a href="/functions">Функции</a>
+                    {% if menu_text %}
+                        {{ menu_text | safe}}
+                    {% endif %}
+                    <a href="/account">Личный кабинет</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Тут писать код --> 
+
+            {% block content %}
+            {% endblock %}
+
+        <!-- Тут писать код -->
+
+        <!--  FOOTER  -->
+        <div class="footer">
+            <footer class="footer-container">
+                <p>footer</p>
+            </footer>
+        </div>
+    </body>
+</html>

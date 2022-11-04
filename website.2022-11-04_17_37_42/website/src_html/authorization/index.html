@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <!-- Тут писать код -->
+
+        <table align = 'center'><tr><td>
+            <h2 id='main_id'>Авторизация в личном кабинете:</h2>
+            <form action="", method="post">
+                {{ form.hidden_tag() }}
+                <div class="auth_input">
+                    <label for="inp" class="inp">
+                        {{form.username(size=32, id="inp", type="text", placeholder=" ")}}
+                        <span class="label">Логин</span>
+                        <span class="border"></span>
+                    </label>
+
+                    <label for="inp" class="inp">
+                        {{form.password(size=32, id="inp", type="password", placeholder=" ")}}
+                        <span class="label">Пароль</span>
+                        <span class="border"></span>
+                    </label>
+                </div>
+
+                <table align="center"><tr><td>
+                    {% if auth_result %}
+                        <div><p style="color: red;">{{ auth_result }}</p></div>
+                    {% endif %}
+                </td></tr></table>
+
+                <label>
+                    {{ form.submit() }}
+                </label>
+            </form>
+        </tr></td></table>
+
+        <!-- Тут писать код -->
+
+{% endblock %}
+
