@@ -25,8 +25,8 @@ from functions import (
 # << STATR APP CONFIGURATION >>
 
 app = Flask(__name__,
-            template_folder='website/src_html',
-            static_folder='website/static')
+            template_folder='website/website/src_html',
+            static_folder='website/website/static')
 cache = Cache(app)
 
 
