@@ -191,7 +191,7 @@ def get_servo():
     return str(servo_value)
 
 
-@application.route("/sound_get/<data_id>/<data>",
+@app.route("/sound_get/<data_id>/<data>",
                    methods=['GET', 'POST'])
 def sound_get(data_id, data):
     try:
