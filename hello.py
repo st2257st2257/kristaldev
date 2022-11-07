@@ -191,6 +191,18 @@ def get_servo():
     return str(servo_value)
 
 
+@application.route("/sound_get/<data_id>/<data>",
+                   methods=['GET', 'POST'])
+def sound_get(data_id, data):
+    try:
+        data_id = data_id[1:]
+        data = data[1:]
+        print(f"Cathced:    <data_id:{data_id}> <data:{data}>")
+        return "1"
+    except Exception as e:
+        return f"Exception: {str(e)}"
+
+
 def create_app():
    return app
 #if __name__ == "__main__":
