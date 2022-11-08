@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <!-- Тут писать код -->
+    <p></p>
+    <p></p>
+
+    Upload your file:
+    <form action="" method="post" enctype=multipart/form-data>
+        <p>File: <input type="file" name="first_file"></p>
+        <input type="submit" name="download_file" value="Download">
+        <input type="text" hidden name="post_type" value="first_file">
+    </form>
+
+    <p></p>
+    <p></p>
+    <!-- Тут писать код  -->
+
+{% endblock %}

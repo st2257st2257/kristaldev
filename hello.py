@@ -3,6 +3,7 @@ from flask import (
     Flask,
     request,
     redirect,
+    send_file,
     send_from_directory
 )
 from flask_login import (
@@ -16,6 +17,7 @@ from flask_login import (
 )
 from typing import Union
 from cache import Cache
+import os
 
 from functions import (
     render,
@@ -201,6 +203,26 @@ def sound_get(data_id, data):
         return "1"
     except Exception as e:
         return f"Exception: {str(e)}"
+
+
+@app.route("/upload_file", methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        filter_dict = dict(request.form)
+        post_type = request.form['post_type']
+        if post_type == "first_file":
+            my_file = request.files['first_file']
+            paper_file.save(os.path.join("/uploads", "img_1"))
+    return "1"
+
+
+@app.route("/download_file/<file_name>/",
+                   methods=['GET', 'POST'])
+def download_file(file_name):
+    try:
+        return send_file(f"uploads/{file_name}", as_attachment=True, download_name=file_name)
+    except Exception as a:
+        return "Exception: {a}"
 
 
 def create_app():
