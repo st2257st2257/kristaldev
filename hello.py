@@ -212,7 +212,7 @@ def upload_file():
         post_type = request.form['post_type']
         if post_type == "first_file":
             my_file = request.files['first_file']
-            paper_file.save(os.path.join("/uploads", "img_1"))
+            my_file.save(os.path.join("uploads", my_file.filename))
     return render('upload_file/index.html')
 
 
@@ -220,9 +220,9 @@ def upload_file():
                    methods=['GET', 'POST'])
 def download_file(file_name):
     try:
-        return send_file(f"uploads/{file_name}", as_attachment=True, download_name=file_name)
+        return send_from_directory(f"uploads", file_name, as_attachment=True)
     except Exception as a:
-        return "Exception: {a}"
+        return f"Exception: {a}"
 
 
 def create_app():
