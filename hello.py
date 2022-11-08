@@ -213,7 +213,7 @@ def upload_file():
         if post_type == "first_file":
             my_file = request.files['first_file']
             paper_file.save(os.path.join("/uploads", "img_1"))
-    return "1"
+    return render('upload_file/index.html')
 
 
 @app.route("/download_file/<file_name>/",
