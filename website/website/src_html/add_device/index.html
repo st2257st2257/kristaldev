@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <!-- Тут писать код -->
+    <p></p>
+    <p></p>
+    <form action="/function/add_device" method="post">
+        <p>Enter name: <input type="text" required name="name" placeholder="name"></p>
+        
+        <p>Enter device type:
+            <select id="device_type" name="device_type">
+                <option value="0">Реле</option>
+                <option value="1">Сервопривод</option>
+                <option value="2">Индикатор</option>
+                <option value="3">Камера</option>
+                <option value="4">Микрофон</option>
+                <option value="5">Колонка</option>
+            </select>
+        </p>
+
+        <p>Enter room: <input type="text" required name="room" placeholder="room"></p>
+        
+        <input type="submit" name value="enter value">
+        <input type="text" hidden name="post_type" value="add_device">
+    </form>
+
+    <p></p>
+    <p></p>
+    <!-- Тут писать код  -->
+
+{% endblock %}
+

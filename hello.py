@@ -24,6 +24,16 @@ from functions import (
     LoginForm,
     get_profile_type)
 
+from fuctions_db import (
+    db_add_log, 
+    db_add_device,
+    db_add_user,
+    check_logs,
+    check_devices,
+    check_users,
+    db_change_value,
+    db_find_devices)
+
 # << STATR APP CONFIGURATION >>
 
 app = Flask(__name__,
@@ -152,7 +162,15 @@ def about():
 
 @app.route("/functions")
 def functions():
-    return render('functions/index.html')
+    try:
+        if current_user.id != 0:
+            pass
+    except Exception:
+        return "Login please!"
+    print(db_find_devices(current_user.id+1))
+    return render('functions/index.html',
+                  devices = db_find_devices(current_user.id+1),
+                  u_id = current_user.id)
 
 
 @app.route("/new_page")
@@ -191,6 +209,57 @@ def servo():
 def get_servo():
     global servo_value
     return str(servo_value)
+
+
+### << ADD DEVICE >> ###
+@app.route("/add_device", methods=['GET', 'POST'])
+def add_device():
+    return render('add_device/index.html')
+
+
+@app.route("/function/add_device", methods=['GET', 'POST'])
+def add_device_func():
+    if request.method == 'POST':
+        filter_dict = dict(request.form)
+        post_type = request.form['post_type']
+        if post_type == "add_device":
+            d_name = request.form['name']
+            d_type = request.form['device_type']
+            d_room = request.form['room']
+            db_add_device(user_id = current_user.id+1,
+                       d_name = d_name,
+                       d_type = d_type,
+                       d_room = d_room, 
+                       value = 0)
+            print(f"d_name:{d_name};d_type:{d_type};d_room:{d_room}")
+            return render('add_device/index_res.html',
+                          d_name=d_name,
+                          d_type=d_type,
+                          d_room=d_room)
+    return "Здесь отобразится устройство после добавления"
+
+
+@app.route("/functions/change_value/<d_id>/<d_value>", methods=['GET', 'POST'])
+def change_value(d_id, d_value):
+    device_id = int(d_id)
+    device_value = int(d_value)
+    new_value = 0
+    if device_value == 1:
+        new_value = 0
+    else:
+        new_value = 1
+
+    db_change_value(current_user.id+1, device_id, new_value)
+
+    return "res"
+
+
+###  <<< GET VALUES >>>  ###
+@app.route("/get_page/get_values/<user_id>", methods=['GET', 'POST'])
+def get_page_values(user_id):
+    return render('get_page/get_values.html',
+                   devices = db_find_devices(user_id))
+
 
 
 @app.route("/sound_get/<data_id>/<data>",
