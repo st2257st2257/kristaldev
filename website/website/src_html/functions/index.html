@@ -3,6 +3,49 @@
 
     <!-- Тут писать код -->
     <p></p>
+    <div class="item_8" style="background: #4d9dd0;">
+        <a href="/add_device">Добавить устройство</a>
+    </div>
+
+    Your devices:
+    <div class="flex-container">
+        <div class="flex-item item_3"><p>Name</p></div>
+        <div class="flex-item item_1"><p>ID</p></div>
+        <div class="flex-item item_2"><p>Room</p></div>
+        <div class="flex-item item_1"><p>State</p></div>
+        <div class="flex-item item_1"><p>Option</p></div>
+    </div>
+    
+<script>
+
+function changeState(device_id, device_value){
+    theUrl = "/functions/change_value/";
+    httpGet(theUrl + device_id + "/" + device_value);
+    console.log(1);
+    //first_nm = res["first_nm"]
+    //second_nm = res["second_nm"];
+    //patronymic_nm = res["patronymic_nm"]
+    //organisation_nm = res["organisation_nm"]
+    //cargo = document.getElementById(String(request_id) + "_author_cargo")
+    //cargo.innerHTML = "<p>Имя: " + first_nm + "</p>"
+    //cargo.innerHTML += "<p>Фамилия: " + second_nm + "</p>"
+    //cargo.innerHTML += "<p>Отчество: " + patronymic_nm + "</p>"
+    //cargo.innerHTML += "<p>Организиция: " + organisation_nm + "</p>"
+}
+
+
+</script>
+
+    {% for device in devices %}
+    <div class="flex-container">
+        <div class="flex-item item_3"><p>{{ device[2] }}</p></div>
+        <div class="flex-item item_1"><p>{{ device[0] }}</p></div>
+        <div class="flex-item item_2"><p>{{ device[4] }}</p></div>
+        <div class="flex-item item_1"><p>{{ device[5] }}</p></div>
+        <div class="flex-item item_1"><button  onclick="changeState({{ device[0] }}, {{ device[5] }})">Change</button></div>
+    </div>
+    {% endfor %}
+
     <p></p>
     Some functions of the project
     <p></p>

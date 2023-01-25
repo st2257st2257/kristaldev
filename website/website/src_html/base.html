@@ -5,35 +5,64 @@
         <title>Rocket</title>
         <meta charset="UTF-8">
         <script type="text/javascript" src="{{ url_for('static', filename='js/js.js') }}?ver={{ css_version }}"></script>
+        <link rel="stylesheet" href="/static/css/general.css">
+        <link rel="stylesheet" href="/static/css/menu.css">
     </head>
     <body>
         <!-- MENU BLOCK -->
-        <header class="header">
-            <div class="menu">
-                <nav class="nav">
+        <header class="header flex-container" style="background: #40c8c2; min-height: 4vw;">
+            <div class="flex-item item_2_space"></div>
+            <div class="flex-item item_8 flex-container">
+                <div class="flex-item item_2">
                     <a href="/">Главная</a>
+                </div>
+                <div class="flex-item item_2">
                     <a href="/about">О проекте</a>
+                </div>
+                <div class="flex-item item_2">
                     <a href="/functions">Функции</a>
-                    {% if menu_text %}
-                        {{ menu_text | safe}}
-                    {% endif %}
+                </div>
+                <div class="flex-item item_2">
                     <a href="/account">Личный кабинет</a>
-                </nav>
+                </div>
+                {% if menu_text %}
+                <div class="flex-item item_2">
+                    {{ menu_text | safe}}
+                </div>
+                {% endif %}
             </div>
+            <div class="flex-item item_2_space"></div>
         </header>
 
         <!-- Тут писать код --> 
-
-            {% block content %}
-            {% endblock %}
-
+        <div class="flex-container" style="min-height: 85vh">
+            <div class="flex-item item_2_space"></div>
+            <div class="flex-item item_8">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <div class="flex-item item_2_space"></div>
+        </div>
         <!-- Тут писать код -->
 
         <!--  FOOTER  -->
-        <div class="footer">
-            <footer class="footer-container">
-                <p>footer</p>
+        <div class="footer flex-container" style="background:#524364; min-height: 4vw;">
+            <div class="flex-item item_2_space"></div>
+            <footer class="flex-item item_8 flex-container">
+                <div class="flex-item item_2">
+                    <a href="#">Политика конфиденциальности</a>
+                </div>
+                <div class="flex-item item_2">
+                    <a href="#">Вопросы</a>
+                </div>
+                <div class="flex-item item_2">
+                    <a href="#">Детально</a>
+                </div>
+                <div class="flex-item item_2">
+                    <a href="#">Поддержка</a>
+                </div>
             </footer>
+            <div class="flex-item item_2_space"></div>
         </div>
     </body>
 </html>

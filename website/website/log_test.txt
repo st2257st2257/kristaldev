@@ -1,4 +1,0 @@
-1) start main.py
-2) go to /Rocket_start/logs/ and start log_test.py
-3) go to http://127.0.0.1:5000/functions
-4) inter time in input field
