@@ -24,7 +24,7 @@ from functions import (
     LoginForm,
     get_profile_type)
 
-from fuctions_db import (
+from functions_db import (
     db_add_log, 
     db_add_device,
     db_add_user,
@@ -32,7 +32,11 @@ from fuctions_db import (
     check_devices,
     check_users,
     db_change_value,
-    db_find_devices)
+    db_find_devices,
+    check_data,
+    db_add_user_data,
+    db_get_user_joystick)
+#db_get_user_joystick)
 
 # << STATR APP CONFIGURATION >>
 
@@ -261,7 +265,6 @@ def get_page_values(user_id):
                    devices = db_find_devices(user_id))
 
 
-
 @app.route("/sound_get/<data_id>/<data>",
                    methods=['GET', 'POST'])
 def sound_get(data_id, data):
@@ -272,6 +275,32 @@ def sound_get(data_id, data):
         return "1"
     except Exception as e:
         return f"Exception: {str(e)}"
+
+
+@app.route("/functions/joystick", methods=['GET', 'POST'])
+def joystick():
+    if request.method == 'POST':
+        filter_dict = dict(request.form)
+        post_type = request.form['post_type']
+        if post_type == "first_file":
+            my_file = request.files['first_file']
+            my_file.save(os.path.join("uploads", my_file.filename))
+    return render('joystick/index.html')
+
+
+@app.route("/functions/joystick/get/<user_id>", methods=['GET', 'POST'])
+def joystick_get(user_id):
+    res = db_get_user_joystick(user_id)
+    data_str = ""
+    for i in range(len(res)):
+        data_str += (str(res[i]) + " ")
+    return data_str
+
+
+@app.route("/functions/joystick/set/<user_id>/<j_x>/<j_y>/<c_1>/<c_2>/<c_3>/<c_4>", methods=['GET', 'POST'])
+def joystick_set(user_id, j_x, j_y, c_1, c_2, c_3, c_4):
+    db_add_user_data(user_id, j_x, j_y, c_1, c_2, c_3, c_4)
+    return str(db_get_user_joystick(user_id))
 
 
 @app.route("/upload_file", methods=['GET', 'POST'])
@@ -294,10 +323,10 @@ def download_file(file_name):
         return f"Exception: {a}"
 
 
-def create_app():
-   return app
-#if __name__ == "__main__":
-#    app.run(debug=True)
+#def create_app():
+#   return app
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 #from flask import Flask

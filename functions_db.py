@@ -5,6 +5,7 @@ from flask_login import (
     AnonymousUserMixin
 )
 import sqlite3
+import datetime
 
 
 def db_add_log(log_text):
@@ -97,11 +98,57 @@ def db_find_devices(user_id):
     return res
 
 
+def db_get_user_joystick(user_id):
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+    e = str(datetime.datetime.now())
+
+    #cur.execute("DROP TABLE joystick_current_data")
+    res = cur.execute(f"SELECT * FROM joystick_current_data WHERE user_id={user_id}").fetchall()[0]
+
+    con.commit()
+    con.close()
+    return res
+
+def db_add_user_data(user_id, joy_x=0, joy_y=0, check_1=0, check_2=0, check_3=0, check_4=0, text_field=""):
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+    e = str(datetime.datetime.now())
+
+    #cur.execute(f"CREATE TABLE joystick_current_data (user_id int, joy_x int, joy_y int, check_1 int, check_2 int, check_3 int, check_4 int, text_field varchar(255));");
+    res = int(cur.execute(f"SELECT COUNT(*) FROM joystick_data").fetchall()[0][0])
+    cur.execute(f"INSERT INTO joystick_data VALUES ({res+1},{user_id},{joy_x},{joy_y},{check_1},{check_2},{check_3},{check_4},\"{text_field}\", \"{e}\");")
+    cur.execute(f"UPDATE joystick_current_data SET user_id={user_id},joy_x={joy_x},joy_y={joy_y},check_1={check_1},check_2={check_2},check_3={check_3},check_4={check_4}  WHERE user_id = {user_id}")
+    if (int(cur.execute(f"SELECT COUNT(*) FROM joystick_current_data WHERE user_id={user_id}").fetchall()[0][0]) == 0):
+        cur.execute(f"INSERT INTO joystick_current_data VALUES ({user_id},{joy_x},{joy_y},{check_1},{check_2},{check_3},{check_4},\"{text_field}\");")
+        print(int(cur.execute(f"SELECT COUNT(*) FROM joystick_current_data WHERE user_id={user_id}").fetchall()[0][0]))
+
+    con.commit()
+    con.close()
+    return 0
+
+def check_data():
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+
+    res_1 = cur.execute(f"SELECT * FROM joystick_data").fetchall()
+    res_2 = cur.execute(f"SELECT * FROM joystick_current_data").fetchall()
+    for i in range(len(res_1)):
+        print(res_1[i])
+    for j in range(len(res_2)):
+        print(res_2[j])
+
+    con.commit()
+    con.close()
+
+
 check_logs()
 check_users()
 check_devices()
-
+check_data()
 
 #change_value(2, 3, 0)
 #add_user("st2257", "wacze000", 5, 1)
 #find_devices(2)
+#db_add_user_data(3, 0, 0, 0, 0, 0, 0, "")
+
