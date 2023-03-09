@@ -41,14 +41,39 @@ function httpGet(theUrl)
     return xmlHttp.responseText;
 }
 
-function asyncCall(x,y) {
-  httpGet("http://127.0.0.1:5000/functions/joystick/set/2/" + parseInt(x) + "/" + parseInt(y) + "/0/0/0/0");
-}
+(function() {
+    document.onmousemove = handleMouseMove;
+    function handleMouseMove(event) {
+        var eventDoc, doc, body;
 
+        event = event || window.event; // IE-ism
 
-joystick_x = 0;
-joystick_y = 0;
-setInterval(asyncCall, 250, parseInt(document.cookie), joystick_y);
+        // If pageX/Y aren't available and clientX/Y are,
+        // calculate pageX/Y - logic taken from jQuery.
+        // (This is to support old IE)
+        if (event.pageX == null && event.clientX != null) {
+            eventDoc = (event.target && event.target.ownerDocument) || document;
+            doc = eventDoc.documentElement;
+            body = eventDoc.body;
+
+            event.pageX = event.clientX +
+              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+              (doc && doc.clientLeft || body && body.clientLeft || 0);
+            event.pageY = event.clientY +
+              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+              (doc && doc.clientTop  || body && body.clientTop  || 0 );
+        }
+
+        x = event.pageX 
+        y = event.pageY
+        var width = innerWidth;
+        var height = innerHeight;
+        var j1centerX = width / 2
+        var j1centerY = height - 200
+        console.log(9);
+        httpGet("http://127.0.0.1:5000/functions/joystick/set/2/" + parseInt(x-j1centerX) + "/" + parseInt(y-j1centerY) + "/0/0/0/0");
+    }
+})();
 
 onload = function () {
 	var x, y;
@@ -95,7 +120,7 @@ onload = function () {
         // joystick_x = x;
         // joystick_y = y;
 
-        document.cookie = x;
+        // document.cookie = x;
         /*
 		I'm using center X and Y to draw the circles
 		c.arc will take the x and y cordinates you give it as the center of the circle, not the
