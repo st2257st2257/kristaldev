@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <!-- Тут писать код -->
+    <p></p>
+    <p></p>
+
+<style>
+body {
+	/*position: fixed;
+	margin:0px;*/
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	background-color: gray;
+}
+#canvas{
+	position: fixed;
+	top: 100px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+    color: gray;
+}
+</style>
+
+<div style="padding-top: 100px;">
+    <canvas id = "canvas"></canvas>
+</div>
+
+
+<script>
+function httpGet(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+}
+
+function asyncCall(x,y) {
+  httpGet("http://127.0.0.1:5000/functions/joystick/set/2/" + parseInt(x) + "/" + parseInt(y) + "/0/0/0/0");
+}
+
+
+joystick_x = 0;
+joystick_y = 0;
+setInterval(asyncCall, 250, parseInt(document.cookie), joystick_y);
+
+onload = function () {
+	var x, y;
+	document.body.appendChild(canvas);
+
+	var width = innerWidth;
+	var height = innerHeight;
+	var x = width / 2;
+	var y = height / 2 - 100;
+	// x and y are for the player
+	// j1 is the outer part of the joystick
+	// j2 is the inner part of the joystick
+	// using centers X and Y of each joystick which as you will soon find out, is rally helpfull
+	var j1centerX = width / 2
+	var j1centerY = height - 200
+	var j2centerX = width / 2
+	var j2centerY = height - 200
+	var j1radius = 50
+	var j2radius = 25
+	var isTouchingJoystick = false
+	var angle = 0;
+	interval = setInterval(draw, 5);
+	
+	
+	canvas.addEventListener("mousedown", joystickS);
+	canvas.addEventListener("mousemove", joystickM);
+	canvas.addEventListener("mouseup", resetJoy);
+	canvas.addEventListener("touchstart", joystickS);
+	canvas.addEventListener("touchmove", joystickM);
+	canvas.addEventListener("touchend", resetJoy);
+	function draw() {
+		c = canvas.getContext('2d');
+		canvas.width = innerWidth;
+		canvas.height = innerHeight;
+
+		c.fillStyle = "white";
+		c.fillRect(x, y, 40, 40);
+        // setTimeout(() => {  console.log(x,y); httpGet("http://127.0.0.1:5000/functions/joystick/set/2/" + int(x) + "/" + int(y) + "/0/0/0/0"); }, 5000);
+        // console.log("http://127.0.0.1:5000/functions/joystick/set/2/" + parseInt(x) + "/" + parseInt(y) + "/0/0/0/0");
+		// httpGet("http://127.0.0.1:5000/functions/joystick/set/2/" + parseInt(x) + "/" + parseInt(y) + "/0/0/0/0");
+
+        // asyncCall(x,y);
+
+        // joystick_x = x;
+        // joystick_y = y;
+
+        document.cookie = x;
+        /*
+		I'm using center X and Y to draw the circles
+		c.arc will take the x and y cordinates you give it as the center of the circle, not the
+		top left corner of it..
+		 */
+		c.beginPath();
+		c.arc(j1centerX, j1centerY, j1radius, 0, 2 * Math.PI)
+		c.fillStyle = "rgba(256, 256, 256, .4)";
+		c.fill();
+
+		c.beginPath();
+		c.arc(j2centerX, j2centerY, j2radius, 0, 2 * Math.PI)
+		c.fillStyle = "rgba(256, 256, 0, .6)";
+		c.fill();
+		if(isTouchingJoystick == true){
+			if(x + Math.cos(angle) > 0 && x + Math.cos(angle) < width-40){
+				x += Math.cos(angle);
+			}
+			if(y + Math.sin(angle) > 0 && y + Math.sin(angle) < height-40){
+				y += Math.sin(angle);
+			}
+		}
+// using the joystick knob position relative to the joystick body to move the player
+		
+		
+	}
+
+	function joystickS(event) {
+		// making sure the joystick is active only if it is first touched before dragged by checking if the users start touching the screen around it
+		// using index 0 of the event touches array to get only the first touch event 
+			let px = event.pageX || event.touches[0].pageX;
+			let py = event.pageY || event.touches[0].pageY;
+			if(pointIsInBox(px, py, j1centerX, j1centerY, j1radius * 2, j1radius * 2)){
+				isTouchingJoystick = true
+			}
+	}
+
+	function joystickM(event) {
+		//let px = event.pageX;
+   		//let py = event.pageY;
+   		let px = event.pageX || event.touches[0].pageX;
+		let py = event.pageY || event.touches[0].pageY;
+		 // using index 0 of the event touches array to get only the first touch event and event.client for mouse
+// called for as long as the sreen is being held
+		if (isTouchingJoystick) {
+			j2centerX = px
+			j2centerY = py
+			angle = calcAngleDegrees(px-j1centerX, py-j1centerY);
+  			//moves the player
+		}
+		
+		// stopping the joystick knob from going too far from the joystick
+
+		j2centerX = clamp(j2centerX, j1centerX - j1radius, j1centerX + j1radius)
+		j2centerY = clamp(j2centerY, j1centerY - j1radius, j1centerY + j1radius)
+		
+		// moves the inner ball(j2) to the posion being held as long as it is inside the boundaries
+	}
+	function resetJoy() {
+		// resetJoy - reset joystick; called when the screen is no longer being held
+		isTouchingJoystick = false;
+		j2centerX = width / 2;
+		j2centerY = height - 200;
+	}
+
+	function clamp(number = 5, minimum = 0, maximum = 10){
+		 if(number < minimum){
+			 number = minimum;
+		 } else if(number > maximum){
+			 number = maximum;
+		 }
+		 return number;
+	}
+
+	function pointIsInBox(pointX = 0, pointY = 0, boxX = 0, boxY = 0, boxWidth = 20, boxHeight = 20) {
+		return pointX >= boxX - boxWidth / 2 &&
+			pointX <= boxX + boxWidth / 2 &&
+			pointY >= boxY - boxHeight / 2 &&
+			pointY <= boxY + boxHeight / 2;
+	}
+	function calcAngleDegrees(x, y) {
+	//a.innerText = (Math.atan2(y, x) * 180 / Math.PI);
+  return Math.atan2(y, x);
+}
+
+}
+</script>
+
+
+
+<button style="position: absolute; width: 200px; background: blue; height: 100px;">
+</button>
+
+
+
+
+    <p></p>
+    <p></p>
+    <!-- Тут писать код  -->
+
+{% endblock %}
