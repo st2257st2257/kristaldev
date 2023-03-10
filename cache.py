@@ -1,12 +1,16 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import text
 
 
 class Cache:
     def __init__(self, app, cache_url='sqlite:////tmp/test.db'):
+        self.app = app
         app.config['SQLALCHEMY_DATABASE_URI'] = cache_url
-        self.db = SQLAlchemy(app)
-        self.record_class = self._create_record_class()
+        with app.app_context():
+            self.db = SQLAlchemy(app)
+            self.record_class = self._create_record_class()
+            self.db.create_all()  # why create if already wxists
 
     def _create_record_class(self):
         class Record(self.db.Model):
@@ -19,9 +23,10 @@ class Cache:
         return Record
 
     def _get_all(self, key: str):
-        with Session(self.db.engine) as session:
-            query = "SELECT val FROM Record WHERE key = :key"
-            return session.execute(query, {"key": key}).all()
+        with self.app.app_context():
+            with Session(self.db.engine) as session:
+                query = "SELECT val FROM Record WHERE key = :key"
+                return session.execute(text(query), {"key": key}).all()
 
     def has(self, key: str):
         return len(self._get_all(key)) > 0
@@ -33,14 +38,15 @@ class Cache:
         return records[0].val
 
     def set(self, key, val):
-        with Session(self.db.engine) as session:
-            session.execute("""
-            INSERT INTO Record (key, val)
-                VALUES
-                    (:key, :val)
-                ON CONFLICT (key) DO UPDATE
-                SET
-                    key = :key,
-                    val = :val
-            """, {"key": key, "val": val})
-            session.commit()
+        with self.app.app_context():
+            with Session(self.db.engine) as session:
+                session.execute(text("""
+                INSERT INTO Record (key, val)
+                    VALUES
+                        (:key, :val)
+                    ON CONFLICT (key) DO UPDATE
+                    SET
+                        key = :key,
+                        val = :val
+                """), {"key": key, "val": val})
+                session.commit()
