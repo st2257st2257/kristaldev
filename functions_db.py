@@ -110,6 +110,19 @@ def db_get_user_joystick(user_id):
     con.close()
     return res
 
+def db_get_user_sensor(user_id):
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+    e = str(datetime.datetime.now())
+
+    #cur.execute("DROP TABLE joystick_current_data")
+    res = cur.execute(f"SELECT * FROM sensors_current_data WHERE user_id={user_id}").fetchall()[0]
+
+    con.commit()
+    con.close()
+    return res
+
+
 def db_add_user_data(user_id, joy_x=0, joy_y=0, check_1=0, check_2=0, check_3=0, check_4=0, text_field=""):
     con = sqlite3.connect("data.db")
     cur = con.cursor()
@@ -127,12 +140,43 @@ def db_add_user_data(user_id, joy_x=0, joy_y=0, check_1=0, check_2=0, check_3=0,
     con.close()
     return 0
 
+def db_update_sensor_data(user_id, gps_lat, gps_lng, a_x, a_y, a_z, bme_temp, bme_pres, bme_alt,  bme_hid):
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+    e = str(datetime.datetime.now())
+
+    res = int(cur.execute(f"SELECT COUNT(*) FROM sensors_data").fetchall()[0][0])
+    cur.execute(f"INSERT INTO sensors_data VALUES ({res+1},{user_id},{gps_lat},{gps_lng},{a_x},{a_y},{a_z},{bme_temp},{bme_pres},{bme_alt},{bme_hid}, \"{e}\");")
+    cur.execute(f"UPDATE sensors_current_data SET user_id={user_id},gps_lat={gps_lat},gps_lng={gps_lng},a_x={a_x},a_y={a_y},a_z={a_z},bme_temp={bme_temp},bme_pres={bme_pres},bme_alt={bme_alt},bme_hid={bme_hid}  WHERE user_id = {user_id}")
+    if (int(cur.execute(f"SELECT COUNT(*) FROM sensors_current_data WHERE user_id={user_id}").fetchall()[0][0]) == 0):
+        cur.execute(f"INSERT INTO sensors_current_data VALUES ({user_id},{gps_lat},{gps_lng},{a_x},{a_y},{a_z},{bme_temp},{bme_pres},{bme_alt},{bme_hid});")
+        print(int(cur.execute(f"SELECT COUNT(*) FROM sensors_current_data WHERE user_id={user_id}").fetchall()[0][0]))
+
+    con.commit()
+    con.close()
+    return 0
+
+
 def check_data():
     con = sqlite3.connect("data.db")
     cur = con.cursor()
 
     res_1 = cur.execute(f"SELECT * FROM joystick_data").fetchall()
     res_2 = cur.execute(f"SELECT * FROM joystick_current_data").fetchall()
+    for i in range(len(res_1)):
+        print(res_1[i])
+    for j in range(len(res_2)):
+        print(res_2[j])
+
+    con.commit()
+    con.close()
+
+def check_sensor_data():
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
+
+    res_1 = cur.execute(f"SELECT * FROM sensors_data").fetchall()
+    res_2 = cur.execute(f"SELECT * FROM sensors_current_data").fetchall()
     for i in range(len(res_1)):
         print(res_1[i])
     for j in range(len(res_2)):
@@ -151,4 +195,5 @@ check_data()
 #add_user("st2257", "wacze000", 5, 1)
 #find_devices(2)
 #db_add_user_data(3, 0, 0, 0, 0, 0, 0, "")
-
+db_update_sensor_data(2, 58, 37, 0, 0, 0, 20, 999, 10,  10)
+check_sensor_data()

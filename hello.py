@@ -35,7 +35,9 @@ from functions_db import (
     db_find_devices,
     check_data,
     db_add_user_data,
-    db_get_user_joystick)
+    db_get_user_joystick,
+    db_get_user_sensor,
+    db_update_sensor_data)
 #db_get_user_joystick)
 
 # << STATR APP CONFIGURATION >>
@@ -295,6 +297,21 @@ def joystick_get(user_id):
     for i in range(len(res)):
         data_str += (str(res[i]) + " ")
     return data_str
+
+
+@app.route("/functions/sensors/get/<user_id>", methods=['GET', 'POST'])
+def sensor_get(user_id):
+    res = db_get_user_sensor(user_id)
+    data_str = ""
+    for i in range(len(res)):
+        data_str += (str(res[i]) + " ")
+    return data_str
+
+
+@app.route("/functions/sensors/set_all/<user_id>/<gps_lat>/<gps_lng>/<a_x>/<a_y>/<a_z>/<bme_temp>/<bme_pres>/<bme_alt>/<bme_hid>", methods=['GET', 'POST'])
+def sensors_set(user_id, gps_lat, gps_lng, a_x, a_y, a_z, bme_temp, bme_pres, bme_alt,  bme_hid):
+    db_update_sensor_data(user_id, gps_lat, gps_lng, a_x, a_y, a_z, bme_temp, bme_pres, bme_alt,  bme_hid)
+    return str(db_get_user_sensor(user_id))
 
 
 @app.route("/functions/joystick/set/<user_id>/<j_x>/<j_y>/<c_1>/<c_2>/<c_3>/<c_4>", methods=['GET', 'POST'])
