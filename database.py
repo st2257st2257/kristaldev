@@ -9,6 +9,8 @@ cur.execute("DROP TABLE joystick_data;")
 cur.execute("DROP TABLE users;")
 cur.execute("DROP TABLE devices;")
 cur.execute("DROP TABLE logs;")
+cur.execute("DROP TABLE sensors_data;")
+cur.execute("DROP TABLE sensors_current_data;")
 
 
 cur.execute("CREATE TABLE users (user_id int PRIMARY KEY, login varchar(255), password varchar(255), user_type int, tag_1 varchar(255));")
@@ -41,6 +43,8 @@ cur.execute("CREATE TABLE logs (log_id int PRIMARY KEY, log_text varchar(255));"
 cur.execute(f"CREATE TABLE joystick_data (data_id int PRIMARY KEY, user_id int, joy_x int, joy_y int, check_1 int, check_2 int, check_3 int, check_4 int, text_field varchar(255), time_data varchar(255));");
 cur.execute(f"CREATE TABLE joystick_current_data (user_id int, joy_x int, joy_y int, check_1 int, check_2 int, check_3 int, check_4 int, text_field varchar(255));");
 
+cur.execute(f"CREATE TABLE sensors_data (data_id int PRIMARY KEY, user_id int, gps_lat double, gps_lng double, a_x double, a_y double, a_z double, bme_temp double, bme_pres double, bme_alt double, bme_hid double, time_data varchar(255));");
+cur.execute(f"CREATE TABLE sensors_current_data (user_id int, gps_lat double, gps_lng double, a_x double, a_y double, a_z double, bme_temp double, bme_pres double, bme_alt double, bme_hid double);");
 
 
 con.commit()
