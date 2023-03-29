@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Canvas experiment</title>
+    <script type="application/javascript">
+      function httpGet(theUrl) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+      }
+
+      function draw() {
+        const canvas = document.getElementById("canvas");
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        if (canvas.getContext) {
+          const ctx = canvas.getContext("2d");
+
+
+
+          let id_arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
+          for (let i = 0; i < 10; i++){
+              theUrl = "/bf/get/" + id_arr[i];
+              res = JSON.parse(httpGet(theUrl));
+              sol_x = res["x"];
+              sol_y = res["y"];
+              sol_h = res["h"];
+
+              ctx.fillStyle = "rgba(" + 2*(100-sol_h) + ", " + 2*sol_h + ", 0, 0.5)";
+              ctx.fillRect(sol_y*5, sol_x*5 , 5, 5);
+          }
+        }
+      }
+      let timerId = setInterval(() => draw(), 1000);
+    </script>
+        <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+
+  </head>
+  <body onload="draw();">
+    <canvas id="canvas" width="{{bf_set['x']*5}}" height="{{bf_set['y']*5}}"></canvas>
+  </body>
+</html>

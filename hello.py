@@ -1,4 +1,5 @@
 import json
+import numpy as np
 from flask import (
     Flask,
     request,
@@ -18,11 +19,15 @@ from flask_login import (
 from typing import Union
 from cache import Cache
 import os
+import threading
+import time
 
 from functions import (
     render,
     LoginForm,
-    get_profile_type)
+    get_profile_type,
+    Soldier,
+    Battlefield)
 
 from functions_db import (
     db_add_log, 
@@ -54,6 +59,25 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 servo_value = 0
+
+###         BF           ###
+
+BF = Battlefield(30, 30)
+
+BF.add_soldier(Soldier(0, 1, s_id=0))
+BF.add_soldier(Soldier(2, 1, s_id=1))
+BF.add_soldier(Soldier(4, 1, s_id=2))
+BF.add_soldier(Soldier(6, 1, s_id=3))
+BF.add_soldier(Soldier(8, 1, s_id=4))
+BF.add_soldier(Soldier(0, 10, s_id=5))
+BF.add_soldier(Soldier(2, 10, s_id=6))
+BF.add_soldier(Soldier(4, 10, s_id=7))
+BF.add_soldier(Soldier(6, 10, s_id=8))
+BF.add_soldier(Soldier(8, 10, s_id=9))
+
+###         BF           ###
+
+
 
 
 @login_manager.user_loader
@@ -340,9 +364,64 @@ def download_file(file_name):
         return f"Exception: {a}"
 
 
+
+### <<< BF FIELD >>> ###
+
+
+@app.route("/bf/show", methods=['GET', 'POST'])
+def bf_show():
+    o_arr = []
+    for i in range(BF.x_l):
+        for j in range(BF.y_l):
+            for item in BF.soldier_field[i][j]:
+                o_arr.append({"x": item.x, "y": item.y, "h": item.h})
+    return render('battlefield/index.html',
+                  o_arr=o_arr,
+                  bf_set={"x": BF.x_l, "y": BF.y_l})
+
+
+@app.route("/bf/move/<s_id>/<new_x>/<new_y>", methods=['GET', 'POST'])
+def bf_move_soldier(s_id, new_x, new_y):
+    BF.move_soldier(s_id, new_x, new_y)
+    return "1"
+
+
+@app.route("/bf/move/group/<new_x>/<new_y>/<id_arr>", methods=['GET', 'POST'])
+def bf_move_group(new_x, new_y, id_arr):
+    id_array = [int(item) for item in id_arr.split('_')]
+    BF.move_group(new_x, new_y, id_array)
+    return "1"
+
+
+@app.route("/bf/get/<s_id>", methods=['GET', 'POST'])
+def bf_get_soldier(s_id):
+    return BF.get_soldier(s_id)
+
+
+@app.route("/bf/get_100/<s_id>", methods=['GET', 'POST'])
+def bf_get_100(s_id):
+    return BF.get_100(s_id)
+
+
+
+@app.route("/bf/fire/<s_id>/<aim_x>/<aim_y>", methods=['GET', 'POST'])
+def bf_fire(s_id, aim_x, aim_y):
+    BF.soldier_fire(s_id, aim_y, aim_x)
+    return "1"
+
+
+def update_bf(value):
+    while 1:
+        time.sleep(1)
+        BF.time_step()
+
+
 #def create_app():
 #   return app
 if __name__ == "__main__":
+    download_thread = threading.Thread(target=update_bf, args=[0])
+    download_thread.start()
+
     app.run(debug=True)
 
 
